@@ -1,0 +1,128 @@
+
+public class Week1 {
+
+    /**
+     * Coding Convention: PascalCase cho tên lớp.
+     * Lớp FinancialUtilitySystem cung cấp các công cụ tính toán tài chính và logic
+     * mảng.
+     */
+    public class FinancialUtilitySystem {
+
+        // Coding Convention: UPPER_CASE cho hằng số (Static Final Variables).
+        private static final int[] CURRENCY_DENOMINATIONS = { 20, 10, 5, 1 };
+
+        /**
+         * Hàm 1: Xếp loại hiệu suất dựa trên điểm số (Kiến thức bài EIPOINT).
+         * 
+         * @param score Điểm số đầu vào.
+         * @return Xếp loại từ A đến F.
+         */
+        public String evaluatePerformance(int score) {
+            // Coding Convention: camelCase cho tên biến và tên hàm.
+            int[] scoreThresholds = { 90, 80, 70, 60, 50, 0 };
+            String[] grades = { "A", "B", "C", "D", "E", "F" };
+
+            for (int i = 0; i < scoreThresholds.length; i++) {
+                if (score >= scoreThresholds[i]) {
+                    return grades[i];
+                }
+            }
+            return "F";
+        }
+
+        /**
+         * Hàm 2: Tính số tiền thưởng dựa trên xếp loại (Phụ thuộc Hàm 1).
+         * 
+         * @param score Điểm hiệu suất.
+         * @return Số tiền thưởng tương ứng.
+         */
+        public int calculateBonusAmount(int score) {
+            // Gọi Hàm 1: evaluatePerformance
+            String grade = evaluatePerformance(score);
+
+            // Coding Convention: Sử dụng Switch-case rõ ràng, thụt đầu dòng (Indentation)
+            // chuẩn.
+            switch (grade) {
+                case "A":
+                    return 100;
+                case "B":
+                    return 75;
+                case "C":
+                    return 50;
+                default:
+                    return 0;
+            }
+        }
+
+        /**
+         * Hàm 3: Kiểm tra tính ổn định của chuỗi điểm thưởng (Kiến thức bài EIINCRDES).
+         * 
+         * @param history Mảng lịch sử điểm thưởng.
+         * @return true nếu điểm thưởng tăng dần (ổn định).
+         */
+        public boolean isPerformanceImproving(int[] history) {
+            if (history == null || history.length < 2)
+                return true;
+
+            for (int i = 1; i < history.length; i++) {
+                // Logic so sánh từ bài EIINCRDES
+                if (history[i] <= history[i - 1]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**
+         * Hàm 4: Quy đổi tiền thưởng ra các mệnh giá (Kiến thức bài EIMONE).
+         * Phụ thuộc vào kết quả của Hàm 2 và Hàm 3.
+         * 
+         * @param score   Điểm hiện tại.
+         * @param history Lịch sử điểm.
+         * @return Tổng số tờ tiền tối thiểu cần dùng.
+         */
+        public int breakdownBonus(int score, int[] history) {
+            int amount = calculateBonusAmount(score);
+
+            // Nếu hiệu suất đang cải thiện (Hàm 3), nhân đôi tiền thưởng
+            if (isPerformanceImproving(history)) {
+                amount *= 2;
+            }
+
+            int totalNotes = 0;
+            // Thuật toán chia tiền từ bài EIMONE
+            for (int denomination : CURRENCY_DENOMINATIONS) {
+                totalNotes += amount / denomination;
+                amount %= denomination;
+            }
+            return totalNotes;
+        }
+
+        /**
+         * Hàm 5: Xác định tính hợp lệ của tập dữ liệu điểm (Kiến thức bài EIEVERYN).
+         * Phụ thuộc gián tiếp vào logic kiểm tra mảng.
+         * 
+         * @param scores      Mảng các điểm số.
+         * @param maxExpected Giá trị điểm cao nhất mong đợi.
+         * @return Trạng thái dữ liệu có đầy đủ (continuous) hay không.
+         */
+        public boolean validateDataIntegrity(int[] scores, int maxExpected) {
+            if (scores == null)
+                return false;
+
+            // Logic sử dụng mảng boolean đánh dấu từ bài EIEVERYN
+            boolean[] tracker = new boolean[maxExpected + 1];
+            for (int s : scores) {
+                if (s > 0 && s <= maxExpected) {
+                    tracker[s] = true;
+                }
+            }
+
+            for (int i = 1; i <= maxExpected; i++) {
+                if (!tracker[i])
+                    return false;
+            }
+            return true;
+        }
+    }
+}
